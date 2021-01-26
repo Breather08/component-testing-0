@@ -1,12 +1,11 @@
-import { mount } from "@vue/test-utils";
+import Vue from "vue";
+import { nextTick } from "vue";
+import Vuetify from "vuetify";
+import { mount, createLocalVue } from "@vue/test-utils";
 import PromotionEdit from "@/components/PromotionEdit.vue";
-import {
-  discountPromotion,
-  informationalPromotion,
-  promotionTypes,
-  Promotion,
-  discountTypes
-} from "@/serializers/promotionSerializer";
+import { Promotion } from "@/serializers/promotionSerializer";
+
+Vue.config.silent = true;
 
 const restaurant = {
   pk: "5fdf69064ec63c1a82d11be8",
@@ -63,32 +62,18 @@ const promotion = {
   description: "Успей заказать со скидкой 10%"
 };
 
-const emptyData = {
-  promotionTypes,
-  discountPromotion,
-  informationalPromotion,
-  startedAtMenu: false,
-  endedAtMenu: false,
-  header: "",
-  image: null,
-  restaurant: null,
-  promotionTypeName: null,
-  promotionType: null,
-  startedAt: null,
-  endedAt: null,
-  discountTypesList: discountTypes,
-  promotionDescription: null
-};
+Vue.use(Vuetify);
+const localVue = createLocalVue();
 
 describe("PromotionEdit.vue", () => {
   let wrapper;
+  const vuetify = new Vuetify();
   beforeEach(() => {
     wrapper = mount(PromotionEdit, {
+      localVue,
+      vuetify,
       propsData: {
         promotion: new Promotion(promotion)
-      },
-      data() {
-        return { ...emptyData };
       }
     });
   });
@@ -103,11 +88,29 @@ describe("PromotionEdit.vue", () => {
     expect(wrapper.emitted("save").length).not.toBe(0);
   });
 
-  it("should handle promotion watcher properly", () => {
-    let counter = 0;
-    wrapper.setMethods({ setupDefaults: jest.fn(() => counter++) });
-    expect(counter).toBe(0);
-    wrapper.vm.$options.watch.promotion.call(wrapper.vm);
-    expect(counter).not.toBe(0);
+  // uncompleted
+  it("should handle promotion watcher properly", async () => {
+    const setupDefaults = jest.fn();
+    wrapper.setMethods({ setupDefaults });
+
+    wrapper.setData({ restaurant: undefined });
+    console.log(wrapper.vm.$data.restaurant);
+
+    await nextTick();
+
+    expect(setupDefaults).toBeCalled();
+  });
+
+  // mock moment then
+  it("should setup defaults correctly", () => {
+    const data = wrapper.vm.$data;
+    expect(data.header).toEqual(promotion.header);
+    expect(data.image).toEqual(promotion.image);
+    expect(data.restaurant).toEqual(promotion.restaurant);
+    expect(data.promotionTypeName).toEqual(promotion.type_name);
+    expect(data.promotionDescription).toEqual(promotion.description);
+    expect(data.promotion_type).toEqual(promotion.promotionType);
+    // expect(data.startedAt).toEqual(promotion.started_at);
+    // expect(data.endedAt).toEqual(promotion.ended_at);
   });
 });
