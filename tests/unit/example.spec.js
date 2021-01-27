@@ -4,16 +4,13 @@ import Vuetify from "vuetify";
 import { mount, createLocalVue } from "@vue/test-utils";
 import PromotionEdit from "@/components/PromotionEdit.vue";
 import { Promotion } from "@/serializers/promotionSerializer";
-import moment from "moment";
 
-jest.mock("moment", () => () => ({
+jest.mock("moment", () => (arg) => ({
   utc: () => ({
     toISOString: () => "2020-12-24T00:00:00+00:00"
   }),
-  format: () => "2020-12-24"
+  format: () => (arg ? "2020-12-24" : "now")
 }));
-
-// Vue.config.silent = true;
 
 const restaurant = {
   pk: "5fdf69064ec63c1a82d11be8",
@@ -29,7 +26,7 @@ const restaurant = {
       latitude: 51.163844,
       longitude: 71.416981
     },
-    text: "Нур-Султан (Астана), улица Кенесары, 22"
+    amount: "Нур-Султан (Астана), улица Кенесары, 22"
   },
   payment_types: {
     cash: true,
@@ -75,6 +72,7 @@ const localVue = createLocalVue();
 
 describe("PromotionEdit.vue", () => {
   let wrapper;
+
   const vuetify = new Vuetify();
   beforeEach(() => {
     wrapper = mount(PromotionEdit, {
@@ -91,28 +89,66 @@ describe("PromotionEdit.vue", () => {
     expect(wrapper.vm._data.promotionTypes).toBeTruthy();
   });
 
+  it("should render properly", () => {
+    expect(wrapper.find(".restaurant-wrapper").exists()).toBeTruthy();
+    expect(wrapper.find(".input-title").exists()).toBeTruthy();
+    expect(wrapper.find(".input-description").exists()).toBeTruthy();
+    expect(wrapper.find(".preview_image").exists()).toBeTruthy();
+    expect(wrapper.find(".default-btn").exists()).toBeTruthy();
+    expect(wrapper.find(".calendar-input").exists()).toBeTruthy();
+  });
+
   it("should handle savePromotion on click", () => {
     wrapper.find(".btn-save").trigger("click");
     expect(wrapper.emitted("save").length).not.toBe(0);
   });
 
-  // uncompleted
   it("should handle promotion watcher properly", async () => {
-    const setupDefaults = jest.fn();
-    wrapper.setMethods({ setupDefaults });
-
-    // wrapper.vm.promotion = { ...promotion, header: "test-header" };
-    wrapper.setProps({ header: "new-test-header" });
-    console.log(wrapper.vm.$props.promotion.header);
-    console.log(wrapper.vm.promotion.header);
+    wrapper.setProps({
+      promotion: { ...promotion, header: "new-test-header" }
+    });
 
     await nextTick();
 
-    expect(setupDefaults).toBeCalled();
+    expect(wrapper.vm.$data.header).toEqual("new-test-header");
   });
 
-  // mock moment then
-  it("should setup defaults correctly", () => {
+  it("should update models correctly", async () => {
+    const triggerInput = (className, tag, testValue) => {
+      const input = wrapper.find(`.${className} ${tag}`);
+      input.element.value = testValue;
+      input.trigger("input");
+    };
+
+    // image
+    triggerInput("image-input", "input", "some_image");
+
+    // promotionDescription
+    triggerInput(
+      "information-type__description",
+      "textarea",
+      "some_description"
+    );
+
+    // promotionType.amount
+    triggerInput("discount-type__amount-input", "input", 15);
+
+    // startedAt
+    triggerInput("calendar-input.start-date", "input", "some_date");
+
+    // endedAt
+    triggerInput("calendar-input.end-date", "input", "some_date");
+
+    await nextTick();
+
+    expect(wrapper.vm.$data.image).toEqual("some_image");
+    expect(wrapper.vm.$data.promotionDescription).toEqual("some_description");
+    expect(wrapper.vm.$data.promotionType.amount).toEqual("15");
+    expect(wrapper.vm.$data.startedAt).toEqual("some_date");
+    expect(wrapper.vm.$data.endedAt).toEqual("some_date");
+  });
+
+  it("should setup defaults correctly", async () => {
     const formattedDate = "2020-12-24";
     const data = wrapper.vm.$data;
     expect(data.header).toEqual(promotion.header);
@@ -123,5 +159,18 @@ describe("PromotionEdit.vue", () => {
     expect(data.promotion_type).toEqual(promotion.promotionType);
     expect(data.startedAt).toEqual(formattedDate);
     expect(data.endedAt).toEqual(formattedDate);
+
+    wrapper.setProps({ promotion: undefined });
+
+    await nextTick();
+
+    expect(data.header).toEqual("");
+    expect(data.image).toBeNull();
+    expect(data.restaurant).toBeNull();
+    expect(data.promotionTypeName).toEqual("informational");
+    expect(data.promotionDescription).toEqual("");
+    expect(data.promotionType).toEqual({});
+    expect(data.startedAt).toEqual("now");
+    expect(data.endedAt).toEqual("now");
   });
 });
