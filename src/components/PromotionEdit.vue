@@ -2,18 +2,18 @@
   <div>
     <v-divider></v-divider>
     <div class="d-flex flex-column my-4">
-      <editable-title
+      <!-- <editable-title
         class="title-view"
         v-model="header"
         placeholder="Новая акция"
-      />
+      /> -->
     </div>
     <div class="d-flex align-center mb-4">
       <span class="input-title">Заведение</span>
-      <restaurant-selection
+      <!-- <restaurant-selection
         :restaurant="restaurant"
         @restaurantSelected="restaurant = $event"
-      />
+      /> -->
     </div>
     <div v-if="restaurant" class="restaurant-wrapper">
       <div class="d-flex mb-4 flex-wrap">
@@ -29,10 +29,10 @@
               hide-details
               required
             />
-            <upload-button
+            <!-- <upload-button
               image-type="promotion"
               @image-uploaded="image = $event"
-            />
+            /> -->
           </div>
           <span class="input-description">
             Скопируйте ссылку на месторасположение изображения акции, либо
@@ -129,12 +129,12 @@
             </v-chip>
           </v-chip-group>
         </div>
-        <foods-selection
+        <!-- <foods-selection
           :restaurantPk="restaurant.pk"
           :key="restaurant.pk"
           :foodIds="promotionType.foodIds"
           @foodsChanged="promotionType.foodIds = $event"
-        />
+        /> -->
       </div>
       <div class="d-flex mb-4">
         <span class="input-title mt-3">Время действия</span>

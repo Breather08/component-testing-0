@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1611723127142" clover="3.2.0">
-  <project timestamp="1611723127142" name="All files">
-    <metrics statements="72" coveredstatements="61" conditionals="76" coveredconditionals="49" methods="18" coveredmethods="10" elements="166" coveredelements="120" complexity="0" loc="72" ncloc="72" packages="2" files="3" classes="3"/>
+<coverage generated="1611731630397" clover="3.2.0">
+  <project timestamp="1611731630397" name="All files">
+    <metrics statements="72" coveredstatements="62" conditionals="76" coveredconditionals="49" methods="18" coveredmethods="11" elements="166" coveredelements="122" complexity="0" loc="72" ncloc="72" packages="2" files="3" classes="3"/>
     <package name="components">
-      <metrics statements="27" coveredstatements="26" conditionals="18" coveredconditionals="11" methods="7" coveredmethods="6"/>
+      <metrics statements="27" coveredstatements="27" conditionals="18" coveredconditionals="11" methods="7" coveredmethods="7"/>
       <file name="PromotionEdit.vue" path="/home/armatura/learn/vue/testing/src/components/PromotionEdit.vue">
-        <metrics statements="27" coveredstatements="26" conditionals="18" coveredconditionals="11" methods="7" coveredmethods="6"/>
+        <metrics statements="27" coveredstatements="27" conditionals="18" coveredconditionals="11" methods="7" coveredmethods="7"/>
         <line num="220" count="1" type="stmt"/>
         <line num="228" count="1" type="stmt"/>
         <line num="238" count="4" type="stmt"/>
@@ -31,7 +31,7 @@
         <line num="300" count="1" type="stmt"/>
         <line num="306" count="1" type="stmt"/>
         <line num="307" count="1" type="stmt"/>
-        <line num="312" count="0" type="stmt"/>
+        <line num="312" count="1" type="stmt"/>
         <line num="315" count="4" type="stmt"/>
       </file>
     </package>

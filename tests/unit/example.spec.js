@@ -4,8 +4,16 @@ import Vuetify from "vuetify";
 import { mount, createLocalVue } from "@vue/test-utils";
 import PromotionEdit from "@/components/PromotionEdit.vue";
 import { Promotion } from "@/serializers/promotionSerializer";
+import moment from "moment";
 
-Vue.config.silent = true;
+jest.mock("moment", () => () => ({
+  utc: () => ({
+    toISOString: () => "2020-12-24T00:00:00+00:00"
+  }),
+  format: () => "2020-12-24"
+}));
+
+// Vue.config.silent = true;
 
 const restaurant = {
   pk: "5fdf69064ec63c1a82d11be8",
@@ -93,8 +101,10 @@ describe("PromotionEdit.vue", () => {
     const setupDefaults = jest.fn();
     wrapper.setMethods({ setupDefaults });
 
-    wrapper.setData({ restaurant: undefined });
-    console.log(wrapper.vm.$data.restaurant);
+    // wrapper.vm.promotion = { ...promotion, header: "test-header" };
+    wrapper.setProps({ header: "new-test-header" });
+    console.log(wrapper.vm.$props.promotion.header);
+    console.log(wrapper.vm.promotion.header);
 
     await nextTick();
 
@@ -103,6 +113,7 @@ describe("PromotionEdit.vue", () => {
 
   // mock moment then
   it("should setup defaults correctly", () => {
+    const formattedDate = "2020-12-24";
     const data = wrapper.vm.$data;
     expect(data.header).toEqual(promotion.header);
     expect(data.image).toEqual(promotion.image);
@@ -110,7 +121,7 @@ describe("PromotionEdit.vue", () => {
     expect(data.promotionTypeName).toEqual(promotion.type_name);
     expect(data.promotionDescription).toEqual(promotion.description);
     expect(data.promotion_type).toEqual(promotion.promotionType);
-    // expect(data.startedAt).toEqual(promotion.started_at);
-    // expect(data.endedAt).toEqual(promotion.ended_at);
+    expect(data.startedAt).toEqual(formattedDate);
+    expect(data.endedAt).toEqual(formattedDate);
   });
 });
