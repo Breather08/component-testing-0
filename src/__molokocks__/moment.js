@@ -27,7 +27,7 @@
 
 const toISOString = jest.fn(() => {});
 
-const format = jest.fn(() => {});
+const format = jest.fn(() => new Date().toISOString().split("T")[0]);
 
 const utc = jest.fn(() => {
   let date = new Date();
